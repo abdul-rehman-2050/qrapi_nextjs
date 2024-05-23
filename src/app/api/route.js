@@ -1,4 +1,6 @@
 // app/routes/hello.js (or any other desired location)
+//npm install @andreekeberg/imagedata
+//https://qrapi-nextjs.vercel.app/api
 import { NextResponse } from "next/server";
 const { PNG } = require('pngjs');
 const jpeg = require('jpeg-js');
@@ -6,6 +8,14 @@ import { getSync as getImageDataFromBuffer } from '@andreekeberg/imagedata';
 import jsQR from 'jsqr';
 
 
+function getHealthMetrics() {
+    return {
+        heart_rate: Math.floor(Math.random() * (100 - 60 + 1)) + 60, // Random heart rate between 60 and 100
+        spo2: Math.floor(Math.random() * (100 - 95 + 1)) + 95, // Random SpO2 between 95 and 100
+        temperature: (Math.random() * (37.2 - 36.1) + 36.1).toFixed(1), // Random temperature between 36.1 and 37.2
+        blood_pressure: `${Math.floor(Math.random() * (120 - 110 + 1)) + 110}/${Math.floor(Math.random() * (80 - 70 + 1)) + 70}` // Random BP between 110/70 and 120/80
+    };
+}
 function decodePng(buffer) {
     return new Promise((resolve, reject) => {
       const png = new PNG();
@@ -28,49 +38,31 @@ function decodePng(buffer) {
   
 
 export async function GET(req, res) {
-    const name = req.nextUrl.searchParams.get("name") || "World";
-  
+    const name = req.nextUrl.searchParams.get("name") || "World";  
     return NextResponse.json({ message: `Hello, ${name}!` });
 }
   
 export async function POST(req) {
     const data = await req.json();
+    console.log(data)    
     const base64Image = data.img;
-    console.log(base64Image)
     const imageBuffer = Buffer.from(base64Image, 'base64');
-    if (imageBuffer[0] === 0x89 && imageBuffer[1] === 0x50) {
-        // PNG file header: 0x89 0x50 0x4E 0x47
-//        imageData = await decodePng(imageBuffer);
-        console.log('png')
-      } else if (imageBuffer[0] === 0xFF && imageBuffer[1] === 0xD8) {
-        // JPEG file header: 0xFF 0xD8 0xFF
-  //      imageData = decodeJpeg(imageBuffer);
-        console.log('jpeg')
-      } else {
-        throw new Error('Unsupported image format');
-      }
+    const qrArray = getImageDataFromBuffer(imageBuffer);
+    const code = jsQR(qrArray.data, qrArray.width, qrArray.height);
 
-        // const qrcodeImage= 'base64stringhere';
-        // const qrcodeBuffer = Buffer.from(qrcodeImage, 'base64');
-        const qrArray = getImageDataFromBuffer(imageBuffer);
-        const code = jsQR(qrArray.data, qrArray.width, qrArray.height);
+    let response = { message: code.data };
 
-    return NextResponse.json({ message: code.data });
-    // Decode base64 image to Uint8Array
-    // const buffer = atob(base64Image.split(',')[1]); // Remove data:application/octet-stream;base64, prefix (if present)
-    // const byteArray = new Uint8Array(buffer.length);
-    // for (let i = 0; i < buffer.length; i++) {
-    //   byteArray[i] = buffer.charCodeAt(i);
-    // }
+    if (code.data.includes("table number")) {
+        const healthMetrics = getHealthMetrics();
+        response = {
+            ...response,
+            healthMetrics: healthMetrics
+        };
+    }
+
+    return NextResponse.json(response);
+
+  //  return NextResponse.json({ message: code.data });
   
-    // // Decode QR code
-    // const decodedData = jsqr(byteArray);
-  
-    // // Check if data was decoded
-    // if (decodedData) {
-    //   return NextResponse.json({ message: "QR Code data:", data: decodedData.data });
-    // } else {
-    //   return NextResponse.json({ message: "Failed to decode QR Code." });
-    // }
   }
   
