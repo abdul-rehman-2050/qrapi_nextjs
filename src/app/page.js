@@ -91,6 +91,13 @@ export default function Home() {
             >
               Submit
             </button>
+
+            <a
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              href="/view"
+            >
+              View History
+            </a>
           </div>
         </form>
       </div>
