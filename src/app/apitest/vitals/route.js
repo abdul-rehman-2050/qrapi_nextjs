@@ -12,6 +12,6 @@ export async function GET(req, res) {
     const name = req.nextUrl.searchParams.get("name") || "World";  
 
     //convert vitals to json response 
-    const vitalsJson = JSON.stringify(vitals);
-    return NextResponse.json(vitalsJson);
+    //const vitalsJson = JSON.stringify(vitals);
+    return NextResponse.json(vitals);
 }
