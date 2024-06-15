@@ -6,16 +6,36 @@ const { PNG } = require('pngjs');
 const jpeg = require('jpeg-js');
 import { getSync as getImageDataFromBuffer } from '@andreekeberg/imagedata';
 import jsQR from 'jsqr';
+import { supabase } from "../../../lib/supabaseClient";
 
 
-function getHealthMetrics() {
-    return {
-        heart_rate: Math.floor(Math.random() * (100 - 60 + 1)) + 60, // Random heart rate between 60 and 100
-        spo2: Math.floor(Math.random() * (100 - 95 + 1)) + 95, // Random SpO2 between 95 and 100
-        temperature: (Math.random() * (37.2 - 36.1) + 36.1).toFixed(1), // Random temperature between 36.1 and 37.2
-        blood_pressure: `${Math.floor(Math.random() * (120 - 110 + 1)) + 110}/${Math.floor(Math.random() * (80 - 70 + 1)) + 70}` // Random BP between 110/70 and 120/80
-    };
+
+/**
+ * Fetch the latest health metrics for a specific bed number.
+ * @param {number} bed_number - The bed number to fetch metrics for.
+ * @returns {object|null} The latest health metrics for the bed number, or null if an error occurred.
+ */
+async function getHealthMetrics(bed_number) {
+    const { data, error } = await supabase
+        .from('patient_vitals')
+        .select('*')
+        .eq('bed_number', bed_number)
+        .order('created_at', { ascending: false }) // Assumes you have a 'created_at' column
+        .limit(1);
+
+        // console.log(data)
+    if (error) {
+        console.error('Error fetching data:', error);
+        return null;
+    }
+
+    // Return the latest entry if available, otherwise return null
+    return data ? data[0]: null;
 }
+
+
+
+
 function decodePng(buffer) {
     return new Promise((resolve, reject) => {
       const png = new PNG();
@@ -52,8 +72,24 @@ export async function POST(req) {
 
     let response = { message: code.data };
 
-    if (code.data.includes("table number")) {
-        const healthMetrics = getHealthMetrics();
+    
+
+    // Split the string on whitespace
+    const parts = response.message.split(' ');
+    const tableNumber = parseInt(parts[parts.length - 1]);
+
+
+
+
+console.log("Extracted number:", tableNumber);
+
+
+
+    console.log(response)
+    if (code.data.includes("number")) {
+      const healthMetrics=await  getHealthMetrics(tableNumber)
+      console.log(healthMetrics)
+        //const healthMetrics = getHealthMetrics();
         response = {
             ...response,
             healthMetrics: healthMetrics
