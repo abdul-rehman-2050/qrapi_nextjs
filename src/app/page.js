@@ -1,7 +1,23 @@
-'use client'
+
+
+
+
 import Head from 'next/head';
-import { useState } from 'react';
-import { redirect } from 'next/navigation';
+import { redirect, RedirectType } from "next/navigation";
+
+
+ async function myLogin(formData){
+  'use server'
+    var email = formData.get('email');
+      var password = formData.get('password');
+      if(email == "admin@admin.com" && password == "hello123"){
+        redirect("/create", RedirectType.replace);
+      }else{
+        throw new Error(`Invlid Credentials`);
+      }
+      
+  
+}
 
 function LoginPage() {
   return (
@@ -11,7 +27,7 @@ function LoginPage() {
       </Head>
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-        <form>
+        <form action={myLogin}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
               Email
