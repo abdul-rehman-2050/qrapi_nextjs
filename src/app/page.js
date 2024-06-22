@@ -1,32 +1,26 @@
-
-
-
-
 import Head from 'next/head';
 import { redirect, RedirectType } from "next/navigation";
 
-
- async function myLogin(formData){
+async function myLogin(formData) {
   'use server'
-    var email = formData.get('email');
-      var password = formData.get('password');
-      if(email == "admin@admin.com" && password == "hello123"){
-        redirect("/create", RedirectType.replace);
-      }else{
-        throw new Error(`Invlid Credentials`);
-      }
-      
-  
+  const email = formData.get('email');
+  const password = formData.get('password');
+  if (email === "admin@admin.com" && password === "hello123") {
+    redirect("/create", RedirectType.replace);
+  } else {
+    throw new Error(`Invalid Credentials`);
+  }
 }
 
 function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 to-purple-500">
       <Head>
-        <title>Login</title>
+        <title>Patient Vital Monitoring Portal - Login</title>
       </Head>
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        <h1 className="text-4xl font-bold mb-6 text-center text-indigo-500">Patient Vital Monitoring Portal</h1>
+        <h2 className="text-2xl font-bold mb-6 text-center">Login to your account</h2>
         <form action={myLogin}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
@@ -36,7 +30,7 @@ function LoginPage() {
               type="email"
               id="email"
               name="email"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-indigo-500"
+              className="w-full px-3 py-2 border border-indigo-500 rounded-lg focus:outline-none focus:border-indigo-500"
               required
             />
           </div>
@@ -48,7 +42,7 @@ function LoginPage() {
               type="password"
               id="password"
               name="password"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-indigo-500"
+              className="w-full px-3 py-2 border border-indigo-500 rounded-lg focus:outline-none focus:border-indigo-500"
               required
             />
           </div>
@@ -62,7 +56,6 @@ function LoginPage() {
       </div>
     </div>
   );
-
 }
 
 export default LoginPage;
