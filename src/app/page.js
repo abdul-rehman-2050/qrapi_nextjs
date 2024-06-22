@@ -1,58 +1,52 @@
 'use client'
+import Head from 'next/head';
 import { useState } from 'react';
 import { redirect } from 'next/navigation';
 
-async function LoginPage() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState(null);
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    // Validation on the server-side
-    if (!username || !password) {
-      setErrorMessage('Please enter username and password');
-      return;
-    }
-
-    // Implement login logic here (e.g., fetch API to validate credentials)
-    // For this example, we'll simulate a successful login after a delay
-    // await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulated delay
-
-    setUsername('');
-    setPassword('');
-    setErrorMessage(null);
-
-    // Redirect to the desired page after successful login
-    return redirect('/dashboard'); // Replace with your target route
-  };
-
+function LoginPage() {
   return (
-    <form onSubmit={handleSubmit} className='bg-gray-800'>
-      {/* Login form fields and error message (see below for CSS) */}
-      <div className="username-field">
-        <label htmlFor="username">Username:</label>
-        <input
-          type="text"
-          id="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <Head>
+        <title>Login</title>
+      </Head>
+      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        <form>
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-indigo-500"
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label htmlFor="password" className="block text-gray-700 font-bold mb-2">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-indigo-500"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600"
+          >
+            Login
+          </button>
+        </form>
       </div>
-      <div className="password-field">
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-      {errorMessage && <div className="error-message">{errorMessage}</div>}
-      <button type="submit">Login</button>
-    </form>
+    </div>
   );
+
 }
 
 export default LoginPage;
