@@ -26,6 +26,8 @@ function LoginPage() {
         <title>Login</title>
       </Head>
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
+      <h1 className="text-4xl font-bold mb-6 text-center text-indigo-500">Patient Vital Monitoring Portal</h1>
+
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
         <form action={myLogin}>
           <div className="mb-4">
